@@ -31,23 +31,14 @@ Expose read + create flows over Postgres with safe, parameterized SQL.
 docker compose up -d
 pip install -r requirements-dev.txt
 export PGHOST=localhost PGPORT=5432 PGDATABASE=ia510 PGUSER=ia510_user PGPASSWORD=ia510_pass
+
+$env:PGHOST="localhost"
+$env:PGPORT="5434"
+$env:PGDATABASE="ia510"
+$env:PGUSER="ia510_user"
+$env:PGPASSWORD="ia510_pass"
+
 pytest -q
 docker compose down -v
 ```
-
-## Rubric (10 points)
-
-| Criteria | Excellent | Good | Satisfactory | Needs Improvement | Pts |
-| --- | --- | --- | --- | --- | --- |
-| Read + Create | List + insert reliably | Mostly works | Only read or only create | Not working | 6 |
-| Secure DB access | Parameterized; no secrets in repo | Mostly secure | Some risky patterns | Unsafe / secrets committed | 2 |
-| Setup + evidence + AI log | Clear setup, screenshots, strong log | Adequate | Minimal | Missing | 2 |
-
-## HTTP contract (autograde + consistency)
-
-| Method | Path | Expected |
-| --- | --- | --- |
-| GET | `/health` | 200 OK |
-| GET | `/customers` | 200; page includes seeded customer marker (`Avery` or `avery.lopez@example.com`) |
-| POST | `/orders` | JSON `{"customer_id": 1, "status": "NEW"}` → 200 or 201; row appears in `orders` |
 
