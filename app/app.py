@@ -16,20 +16,18 @@ def health():
 def index():
     return render_template("form.html")
 
-
-
 # Insert new customer
 @app.route("/add_customer", methods=["POST"])
 def add_customer():
     name = request.form["name"]
     email = request.form["email"]
 
-    conn = get_connection()
+    conn = get_conn()
     cur = conn.cursor()
 
     try:
         cur.execute(
-            "INSERT INTO customers (name, email) VALUES (%s, %s)",
+            "INSERT INTO customer (name, email) VALUES (%s, %s)",
             (name, email),
         )
         conn.commit()
@@ -46,7 +44,7 @@ def add_customer():
 # View all customers
 @app.route("/customers")
 def view_customers():
-    conn = get_connection()
+    conn = get_conn()
     cur = conn.cursor()
 
     cur.execute("SELECT id, name, email, created_at FROM customers ORDER BY id")
