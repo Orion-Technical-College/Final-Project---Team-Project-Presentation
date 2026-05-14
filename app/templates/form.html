@@ -7,7 +7,7 @@
 
 <h1>Add New Customer</h1>
 
-/add_customer
+<form action="/add_customer" method="POST">
     <label>Customer ID:</label><br>
     <input type="number" name="customer_id" required><br><br>
 
@@ -28,8 +28,8 @@
 
 <br>
 
-/customers
-    <button>View Customers</button>
+<a href="/customers">
+    <button type="button">View Customers</button>
 </a>
 
 </body>

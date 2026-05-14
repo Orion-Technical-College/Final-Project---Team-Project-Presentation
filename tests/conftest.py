@@ -8,7 +8,7 @@ import pytest
 def _dsn() -> str:
     return (
         f"host={os.environ.get('PGHOST', 'localhost')} "
-        f"port={os.environ.get('PGPORT', '5432')} "
+        f"port={os.environ.get('PGPORT', '5434')} "
         f"dbname={os.environ.get('PGDATABASE', 'ia510')} "
         f"user={os.environ.get('PGUSER', 'ia510_user')} "
         f"password={os.environ.get('PGPASSWORD', 'ia510_pass')}"

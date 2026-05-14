@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Customer</title>
+</head>
+<body>
+
+<h0] }}" method="POST"><h1>Edit Customer</h1>
+    
+    <label>Company Name:</label><br>
+    <input type="text" name="company_name" value="{{ customer[1] }}" required><br><br>
+
+    <label>Contact Name:</label><br>
+    <input type="text" name="contact_name" value="{{ customer[2] }}"><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" value="{{ customer[3] }}" required><br><br>
+
+    <label>Region:</label><br>
+    <input type="text" name="region" value="{{ customer[4] }}"><br><br>
+
+    <button type="submit">Update Customer</button>
+</form>
+
+<br>
+
+<a href="/customers">
+    <button type="button">Cancel</button>
+</a>
+
+</body>
+</html>

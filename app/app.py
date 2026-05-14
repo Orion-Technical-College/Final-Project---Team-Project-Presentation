@@ -11,6 +11,9 @@ app = Flask(__name__)
 def health():
     return "", 200
 
+@app.route("/")
+def index():
+    return render_template("form.html")
 
 # Add new customer
 @app.route("/add_customer", methods=["POST"])
