@@ -1,4 +1,4 @@
-# IA520 MP7 — Front-End + Postgres Handshake
+
 
 ## AI use (course policy)
 
