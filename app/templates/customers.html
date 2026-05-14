@@ -4,29 +4,35 @@
     <title>Customers</title>
 </head>
 <body>
-    <h1>Customer List</h1>
 
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created At</th>
-        </tr>
+<h1>Customer List</h1>
 
-        {% for c in customers %}
-        <tr>
-            <td>{{ c[0] }}</td>
-            <td>{{ c[1] }}</td>
-            <td>{{ c[2] }}</td>
-            <td>{{ c[3] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Company</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Region</th>
+        <th>Created</th>
+    </tr>
 
-    <br>
-    <a href="/">
-        <button>Add New Customer</button>
-    </a>
+    {% for c in customers %}
+    <tr>
+        <td>{{ c[0] }}</td>
+        <td>{{ c[1] }}</td>
+        <td>{{ c[2] }}</td>
+        <td>{{ c[3] }}</td>
+        <td>{{ c[4] }}</td>
+        <td>{{ c[5] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+/
+    <button>Add Another</button>
+</a>
+
 </body>
 </html>

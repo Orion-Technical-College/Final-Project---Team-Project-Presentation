@@ -11,29 +11,31 @@ app = Flask(__name__)
 def health():
     return "", 200
 
-# Homepage – form to add customer
-@app.route("/")
-def index():
-    return render_template("form.html")
 
-# Insert new customer
+# Add new customer
 @app.route("/add_customer", methods=["POST"])
 def add_customer():
-    name = request.form["name"]
+    customer_id = request.form["customer_id"]
+    company_name = request.form["company_name"]
+    contact_name = request.form["contact_name"]
     email = request.form["email"]
+    region = request.form["region"]
 
     conn = get_conn()
     cur = conn.cursor()
 
     try:
-        cur.execute(
-            "INSERT INTO customer (name, email) VALUES (%s, %s)",
-            (name, email),
-        )
+        cur.execute("""
+            INSERT INTO CUSTOMER (CompanyName, ContactName, Email, Region)
+            VALUES (%s, %s, %s, %s)
+        """, (company_name, contact_name, email, region))
+
         conn.commit()
+
     except Exception as e:
         conn.rollback()
-        return f"Error: {e}"
+        return f"❌ Error inserting customer: {e}"
+
     finally:
         cur.close()
         conn.close()
@@ -47,11 +49,21 @@ def view_customers():
     conn = get_conn()
     cur = conn.cursor()
 
-    cur.execute("SELECT id, name, email, created_at FROM customers ORDER BY id")
-    customers = cur.fetchall()
+    try:
+        cur.execute("""
+            SELECT CustomerID, CompanyName, ContactName, Email, Region, created_at
+            FROM CUSTOMER
+            ORDER BY CustomerID
+        """)
 
-    cur.close()
-    conn.close()
+        customers = cur.fetchall()
+
+    except Exception as e:
+        return f"❌ Error retrieving customers: {e}"
+
+    finally:
+        cur.close()
+        conn.close()
 
     return render_template("customers.html", customers=customers)
 

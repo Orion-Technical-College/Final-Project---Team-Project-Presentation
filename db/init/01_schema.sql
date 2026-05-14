@@ -2,7 +2,7 @@
 -- Any change here must be rolled out to all embedding repos in one coordinated change-set.
 
 CREATE TABLE CUSTOMER (
-    CustomerID INT PRIMARY KEY,
+    CustomerID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     CompanyName VARCHAR(100) NOT NULL,
     ContactName VARCHAR(100),
     Email VARCHAR(150) UNIQUE NOT NULL,
