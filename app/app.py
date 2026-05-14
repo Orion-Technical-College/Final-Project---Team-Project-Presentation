@@ -18,7 +18,6 @@ def index():
 # Add new customer
 @app.route("/add_customer", methods=["POST"])
 def add_customer():
-    customer_id = request.form["customer_id"]
     company_name = request.form["company_name"]
     contact_name = request.form["contact_name"]
     email = request.form["email"]
