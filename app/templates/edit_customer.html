@@ -5,7 +5,9 @@
 </head>
 <body>
 
-<h0] }}" method="POST"><h1>Edit Customer</h1>
+<h1>Edit Customer</h1>
+
+<form action="/update/{{ customer[0] }}" method="POST">
     
     <label>Company Name:</label><br>
     <input type="text" name="company_name" value="{{ customer[1] }}" required><br><br>

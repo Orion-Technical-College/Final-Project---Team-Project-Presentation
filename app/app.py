@@ -70,5 +70,79 @@ def view_customers():
 
     return render_template("customers.html", customers=customers)
 
+# Edit customer details
+@app.route("/edit/<int:customer_id>")
+def edit_customer(customer_id):
+    conn = get_conn()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT CustomerID, CompanyName, ContactName, Email, Region
+        FROM CUSTOMER
+        WHERE CustomerID = %s
+    """, (customer_id,))
+
+    customer = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return render_template("edit_customer.html", customer=customer)
+
+@app.route("/update/<int:customer_id>", methods=["POST"])
+def update_customer(customer_id):
+    company_name = request.form["company_name"]
+    contact_name = request.form["contact_name"]
+    email = request.form["email"]
+    region = request.form["region"]
+
+    conn = get_conn()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            UPDATE CUSTOMER
+            SET CompanyName = %s,
+                ContactName = %s,
+                Email = %s,
+                Region = %s
+            WHERE CustomerID = %s
+        """, (company_name, contact_name, email, region, customer_id))
+
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error updating customer: {e}"
+
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for("view_customers"))
+
+@app.route("/delete/<int:customer_id>")
+def delete_customer(customer_id):
+    conn = get_conn()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            DELETE FROM CUSTOMER
+            WHERE CustomerID = %s
+        """, (customer_id,))
+
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error deleting customer: {e}"
+
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for("view_customers"))
+
 if __name__ == "__main__":
     app.run(debug=True)
