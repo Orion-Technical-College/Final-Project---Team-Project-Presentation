@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, render_template, request, redirect, url_for
 
 from .db import get_conn
 
@@ -11,35 +11,51 @@ app = Flask(__name__)
 def health():
     return "", 200
 
-
-@app.get("/customers")
-def customers():
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT id, name, email FROM customers ORDER BY id")
-            rows = cur.fetchall()
-    return render_template("list.html", rows=rows)
+# Homepage – form to add customer
+@app.route("/")
+def index():
+    return render_template("form.html")
 
 
-@app.get("/orders/new")
-def create_form():
-    return render_template("create.html")
 
+# Insert new customer
+@app.route("/add_customer", methods=["POST"])
+def add_customer():
+    name = request.form["name"]
+    email = request.form["email"]
 
-@app.post("/orders")
-def create_order():
-    payload = request.get_json(silent=True) or {}
+    conn = get_connection()
+    cur = conn.cursor()
+
     try:
-        customer_id = int(payload.get("customer_id"))
-        status = str(payload.get("status", "NEW"))
-    except (TypeError, ValueError):
-        abort(400)
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO orders (customer_id, status) VALUES (%s, %s) RETURNING id",
-                (customer_id, status),
-            )
-            new_id = cur.fetchone()[0]
+        cur.execute(
+            "INSERT INTO customers (name, email) VALUES (%s, %s)",
+            (name, email),
+        )
         conn.commit()
-    return {"id": new_id}, 201
+    except Exception as e:
+        conn.rollback()
+        return f"Error: {e}"
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for("view_customers"))
+
+
+# View all customers
+@app.route("/customers")
+def view_customers():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, email, created_at FROM customers ORDER BY id")
+    customers = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template("customers.html", customers=customers)
+
+if __name__ == "__main__":
+    app.run(debug=True)
