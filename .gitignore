@@ -1,0 +1,10 @@
+.env
+.DS_Store
+Thumbs.db
+node_modules/
+__pycache__/
+.pytest_cache/
+venv/
+.venv/
+*.log
+*.sqlite

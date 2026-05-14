@@ -1,0 +1,35 @@
+name: autograde
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install -r requirements-dev.txt
+      - name: Start Postgres
+        run: docker compose up -d
+      - name: Wait for Postgres
+        run: |
+          for i in $(seq 1 60); do
+            docker compose exec -T postgres pg_isready -U ia510_user -d ia510 && exit 0
+            sleep 2
+          done
+          exit 1
+      - name: pytest
+        env:
+          PGHOST: localhost
+          PGPORT: "5432"
+          PGDATABASE: ia510
+          PGUSER: ia510_user
+          PGPASSWORD: ia510_pass
+        run: pytest -q
+      - name: Docker down
+        if: always()
+        run: docker compose down -v

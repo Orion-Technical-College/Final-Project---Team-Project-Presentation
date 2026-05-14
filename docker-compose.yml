@@ -1,0 +1,14 @@
+name: ia510
+services:
+  postgres:
+    image: postgres:16-alpine
+    env_file: .env.example
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ia510_user -d ia510"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
