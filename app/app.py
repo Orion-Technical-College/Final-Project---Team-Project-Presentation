@@ -22,7 +22,6 @@ def add_customer():
     contact_name = request.form["contact_name"]
     email = request.form["email"]
     region = request.form["region"]
-
     try:
         with get_conn() as conn:
             cur = conn.cursor()
