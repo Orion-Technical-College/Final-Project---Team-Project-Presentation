@@ -24,71 +24,57 @@ def add_customer():
     email = request.form["email"]
     region = request.form["region"]
 
-    conn = get_conn()
-    cur = conn.cursor()
-
     try:
-        cur.execute("""
-            INSERT INTO CUSTOMER (CompanyName, ContactName, Email, Region)
-            VALUES (%s, %s, %s, %s)
-        """, (company_name, contact_name, email, region))
+        with get_conn() as conn:
+            cur = conn.cursor()
 
-        conn.commit()
+            cur.execute("""
+                INSERT INTO CUSTOMER (CustomerID, CompanyName, ContactName, Email, Region)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (customer_id, company_name, contact_name, email, region))
+
+            conn.commit()
 
     except Exception as e:
-        conn.rollback()
         return f"❌ Error inserting customer: {e}"
 
-    finally:
-        cur.close()
-        conn.close()
-
     return redirect(url_for("view_customers"))
+
 
 
 # View all customers
 @app.route("/customers")
 def view_customers():
-    conn = get_conn()
-    cur = conn.cursor()
+    with get_conn() as conn:
+        cur = conn.cursor()
 
-    try:
         cur.execute("""
             SELECT CustomerID, CompanyName, ContactName, Email, Region, created_at
             FROM CUSTOMER
             ORDER BY CustomerID
-        """)
+           """)
 
         customers = cur.fetchall()
 
-    except Exception as e:
-        return f"❌ Error retrieving customers: {e}"
-
-    finally:
-        cur.close()
-        conn.close()
-
-    return render_template("customers.html", customers=customers)
+        return render_template("customers.html", customers=customers)
 
 # Edit customer details
 @app.route("/edit/<int:customer_id>")
 def edit_customer(customer_id):
-    conn = get_conn()
-    cur = conn.cursor()
+    with get_conn() as conn:
+        cur = conn.cursor()
 
-    cur.execute("""
-        SELECT CustomerID, CompanyName, ContactName, Email, Region
-        FROM CUSTOMER
-        WHERE CustomerID = %s
-    """, (customer_id,))
+        cur.execute("""
+            SELECT CustomerID, CompanyName, ContactName, Email, Region
+            FROM CUSTOMER
+            WHERE CustomerID = %s
+        """, (customer_id,))
 
-    customer = cur.fetchone()
-
-    cur.close()
-    conn.close()
+        customer = cur.fetchone()
 
     return render_template("edit_customer.html", customer=customer)
 
+# Update customer details
 @app.route("/update/<int:customer_id>", methods=["POST"])
 def update_customer(customer_id):
     company_name = request.form["company_name"]
@@ -96,53 +82,46 @@ def update_customer(customer_id):
     email = request.form["email"]
     region = request.form["region"]
 
-    conn = get_conn()
-    cur = conn.cursor()
-
     try:
-        cur.execute("""
-            UPDATE CUSTOMER
-            SET CompanyName = %s,
-                ContactName = %s,
-                Email = %s,
-                Region = %s
-            WHERE CustomerID = %s
-        """, (company_name, contact_name, email, region, customer_id))
+        with get_conn() as conn:
+            cur = conn.cursor()
 
-        conn.commit()
+            cur.execute("""
+                UPDATE CUSTOMER
+                SET CompanyName = %s,
+                    ContactName = %s,
+                    Email = %s,
+                    Region = %s
+                WHERE CustomerID = %s
+            """, (company_name, contact_name, email, region, customer_id))
+
+            conn.commit()
 
     except Exception as e:
-        conn.rollback()
         return f"❌ Error updating customer: {e}"
 
-    finally:
-        cur.close()
-        conn.close()
-
     return redirect(url_for("view_customers"))
 
+# Delete customer
 @app.route("/delete/<int:customer_id>")
 def delete_customer(customer_id):
-    conn = get_conn()
-    cur = conn.cursor()
-
+    
     try:
-        cur.execute("""
-            DELETE FROM CUSTOMER
-            WHERE CustomerID = %s
-        """, (customer_id,))
+        with get_conn() as conn:
+            cur = conn.cursor()
 
-        conn.commit()
+            cur.execute("""
+                DELETE FROM CUSTOMER
+                WHERE CustomerID = %s
+            """, (customer_id,))
+
+            conn.commit()
 
     except Exception as e:
-        conn.rollback()
         return f"❌ Error deleting customer: {e}"
 
-    finally:
-        cur.close()
-        conn.close()
-
     return redirect(url_for("view_customers"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
