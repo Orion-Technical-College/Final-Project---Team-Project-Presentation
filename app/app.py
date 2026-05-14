@@ -29,14 +29,14 @@ def add_customer():
             cur = conn.cursor()
 
             cur.execute("""
-                INSERT INTO CUSTOMER (CustomerID, CompanyName, ContactName, Email, Region)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (customer_id, company_name, contact_name, email, region))
+                INSERT INTO CUSTOMER (CompanyName, ContactName, Email, Region)
+                VALUES (%s, %s, %s, %s)
+            """, (company_name, contact_name, email, region))
 
             conn.commit()
 
     except Exception as e:
-        return f"❌ Error inserting customer: {e}"
+        return f"Error inserting customer: {e}"
 
     return redirect(url_for("view_customers"))
 
@@ -98,7 +98,7 @@ def update_customer(customer_id):
             conn.commit()
 
     except Exception as e:
-        return f"❌ Error updating customer: {e}"
+        return f"Error updating customer: {e}"
 
     return redirect(url_for("view_customers"))
 
@@ -118,7 +118,7 @@ def delete_customer(customer_id):
             conn.commit()
 
     except Exception as e:
-        return f"❌ Error deleting customer: {e}"
+        return f"Error deleting customer: {e}"
 
     return redirect(url_for("view_customers"))
 
